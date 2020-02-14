@@ -16,11 +16,14 @@ public class AnalisadorSintatico {
    private Tokens atual;
    private Tokens anterior;
    private Tokens proximo;
+   private int indice =0;
+   private ArrayList<String> Tipo;
    
    public AnalisadorSintatico(Tokens atual, Tokens anterior, Tokens proximo){
        this.atual= atual;
        this.anterior= anterior;
        this.proximo= proximo;
+       
    }
 
    public AnalisadorSintatico(ArrayList<Tokens> codigoTratado){
@@ -28,10 +31,18 @@ public class AnalisadorSintatico {
    }
    
    public ArrayList<String> AnalisePrograma (){
-       atual= codigoTratado.get(0);
-       proximo= codigoTratado.get(1);
+       atual= codigoTratado.get(indice);
+       proximo= codigoTratado.get(indice+1);
        if((atual.getLexema()).toString()=="const"){
            AnaliseConst();
+       } else if((atual.getLexema()).toString()=="START"){
+           AnaliseStart();
+       }else if((atual.getLexema()).toString()=="var"){
+           AnaliseVariavel();
+       }else if((atual.getLexema()).toString()=="struct"){
+           AnaliseStruct();
+       }else if((atual.getLexema()).toString()=="typedef"){
+           AnaliseTypedef();
        }
        return null;
        
@@ -79,9 +90,85 @@ public class AnalisadorSintatico {
     }
 
     private void AnaliseConst() {
-        if(proximo.getTipo()=="DELIMITADOR")
+        if(proximo.getTipo()=="DELIMITADOR" && proximo.getLexema().toString() == "{"){
+            andaUm();
+            while(atual.getTipo()!="DELIMITADOR" && atual.getLexema().toString()!= "}"){
+                andaUm();
+                ConstantStructure();
+            }
+                
+        }
+    }
+    
+    private void ConstantStructure(){
+        if(Tipo.contains(atual.getLexema().toString())){
+            if(atual.getTipo() == "IDENTIFICADOR" && proximo.getLexema().toString() == "="){
+                andaUm();
+                
+                if(proximo.getTipo() == "cadeiaDeCaracteres" || proximo.getTipo()
+                        == "numeros" || proximo.getTipo() == "boolean"){
+                   andaUm();
+                    if(proximo.getLexema().toString() == ";"){
+                        
+                    }
+                }
+            }
+        }
+    }
+
+    private void AnaliseStart() {
+         if(proximo.getTipo()=="DELIMITADOR" && proximo.getLexema().toString() == "("){
+           andaUm();
+            if(proximo.getTipo() == "DELIMITADOR" && proximo.getLexema().toString() == ")"){
+                andaUm();
+                if(proximo.getTipo()=="DELIMITADOR" && proximo.getLexema().toString() == "{"){
+                    
+                    while(atual.getTipo()!="DELIMITADOR" && atual.getLexema().toString()!= "}"){
+                       andaUm();
+                    }
+            }
+         }
+           
+                
+        }
+    }
+    private void andaUm(){
+        indice++;
+        anterior=atual;
+        atual=proximo;
+        proximo=codigoTratado.get(indice+1);
+    }
+
+    private void AnaliseVariavel() {
+         //To change body of generated methods, choose Tools | Templates.
+           if(proximo.getTipo()=="DELIMITADOR" && proximo.getLexema().toString() == "{")
         {
-            
+            while(atual.getTipo()!="DELIMITADOR" && atual.getLexema().toString()!= "}"){
+                andaUm();
+            }
+                
+        }
+    }
+
+    private void AnaliseStruct() {
+         //To change body of generated methods, choose Tools | Templates.
+           if(proximo.getTipo()=="DELIMITADOR" && proximo.getLexema().toString() == "{")
+        {
+            while(atual.getTipo()!="DELIMITADOR" && atual.getLexema().toString()!= "}"){
+                andaUm();
+            }
+                
+        }
+    }
+
+    private void AnaliseTypedef() {
+         //To change body of generated methods, choose Tools | Templates.
+           if(proximo.getTipo()=="DELIMITADOR" && proximo.getLexema().toString() == "{")
+        {
+            while(atual.getTipo()!="DELIMITADOR" && atual.getLexema().toString()!= "}"){
+                andaUm();
+            }
+                
         }
     }
 
