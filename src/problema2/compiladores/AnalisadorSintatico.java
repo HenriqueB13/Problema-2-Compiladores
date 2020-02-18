@@ -276,8 +276,74 @@ public class AnalisadorSintatico {
              }
          }
     }
-
     
+    private void Incremments(){
+        if(atual.getTipo()=="IDENTIFICADOR"){
+            andaUm();
+            incremment();
+            andaUm();
+            if(atual.getLexema().toString()==";"){
+                return;
+            }
+        }
+    }
+
+    private void incremment() {
+        //To change body of generated methods, choose Tools | Templates.
+        if(atual.getLexema().toString()=="++"||atual.getLexema().toString()=="--"){
+            return;
+        }
+    }
+    private void chFunProc(){
+        if(atual.getTipo()=="IDENTIFICADOR"){
+            andaUm();
+            if(atual.getLexema().toString()=="("){
+                andaUm();
+                chParam();
+                andaUm();
+                if(atual.getLexema().toString()==")"){
+                    andaUm();
+                    if(atual.getLexema().toString() == ";"){
+                        return;
+                    }
+                }
+                    
+            }
+        }
+        
+    }
+
+    private void chParam() {
+        //To change body of generated methods, choose Tools | Templates.
+        if(atual.getTipo()=="IDENTIFICADOR"){
+            andaUm();
+            chParam2();
+            return;
+        }
+        else if(atual.getTipo() == "cadeiaDeCaracteres" || atual.getTipo()
+                        == "numeros" || atual.getTipo() == "boolean"){
+            andaUm();
+            chParam2();
+            return;
+        }
+    }
+
+    private void chParam2() {
+         //To change body of generated methods, choose Tools | Templates.
+         if(atual.getLexema().toString() == ","){
+             andaUm();
+             if(atual.getTipo()=="IDENTIFICADOR"){
+                 andaUm();
+                 chParam2();
+             }
+             else if(atual.getTipo() == "cadeiaDeCaracteres" || atual.getTipo()
+                        == "numeros" || atual.getTipo() == "boolean"){
+                 
+                 andaUm();
+                 chParam2();
+             }
+         }
+    }
 
    
 
